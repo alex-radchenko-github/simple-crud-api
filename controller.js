@@ -1,5 +1,5 @@
 const data = require("./data");
-const {v4, validate} = require('uuid')
+const {v4} = require('uuid')
 
 
 class Controller {
@@ -25,47 +25,65 @@ class Controller {
         });
     }
 
-    // creating a todo
-    async createTodo(user) {
+    async createUser(user) {
         return new Promise((resolve, _) => {
             let newUser = {
                 id: v4(),
                 ...user,
             }
             data.push(newUser)
-            // return the new created todo
             resolve(newUser);
 
         });
     }
 
-    // updating a todo
-    async updateTodo(id) {
+    async updateUser(id, new_user_data) {
         return new Promise((resolve, reject) => {
-            // get the todo.
-            let todo = data.find((todo) => todo.id === parseInt(id));
-            // if no todo, return an error
-            if (!todo) {
-                reject(`No todo with id ${id} found`);
+            let userIndex
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id === id) {
+                    userIndex = i
+                    break
+                }
             }
-            //else, update it by setting completed to true
-            todo["completed"] = true;
-            // return the updated todo
-            resolve(todo);
+
+            let updatedUser = {
+                id: id,
+                "name": new_user_data.name,
+                "age": new_user_data.age,
+                "hobbies": new_user_data.hobbies
+            }
+
+            if (userIndex === undefined) {
+                reject(`No user with id ${id} found`);
+            } else {
+                data[userIndex] = updatedUser
+                resolve(updatedUser);
+
+
+            }
+
         });
     }
 
-    // deleting a todo
-    async deleteTodo(id) {
+    async deleteUser(id) {
         return new Promise((resolve, reject) => {
-            // get the todo
-            let todo = data.find((todo) => todo.id === parseInt(id));
-            // if no todo, return an error
-            if (!todo) {
-                reject(`No todo with id ${id} found`);
+
+            let userIndex
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].id === id) {
+                    userIndex = data[i].id
+                }
             }
-            // else, return a success message
-            resolve(`Todo deleted successfully`);
+
+            if (!userIndex) {
+                reject(`No user with id ${id} found`);
+            } else {
+                data.splice(userIndex, 1)
+
+
+            }
+            resolve(`User deleted successfully`);
         });
     }
 }
