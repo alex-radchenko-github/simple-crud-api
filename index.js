@@ -1,5 +1,5 @@
 const http = require("http");
-const Todo = require("./controller");
+const User = require("./controller");
 const {getReqData} = require("./utils");
 const {v4, validate} = require('uuid')
 
@@ -9,9 +9,9 @@ const PORT = process.env.PORT || 5000;
 const server = http.createServer(async (req, res) => {
 
     if (req.url === "/person" && req.method === "GET") {
-        const todos = await new Todo().getAllUsers();
+        const users = await new User().getAllUsers();
         res.writeHead(200, {"Content-Type": "application/json"});
-        res.end(JSON.stringify(todos));
+        res.end(JSON.stringify(users));
     } else if (req.url === "/person/" + req.url.split("/")[2] && req.method === "GET") {
 
         try {
@@ -21,21 +21,15 @@ const server = http.createServer(async (req, res) => {
                 return res.end(`Error: Not valid ID`);
 
             } else {
-                // console.log(id)
-                // get todo
-                const todo = await new Todo().getTodo(id);
-                // set the status code and content-type
+                const user = await new User().getOneUser(id);
                 res.writeHead(200, {"Content-Type": "application/json"});
-                // send the data
-                res.end(JSON.stringify(todo));
+                res.end(JSON.stringify(user));
 
 
             }
 
         } catch (error) {
-            // set the status code and content-type
             res.writeHead(404, {"Content-Type": "application/json"});
-            // send the error
             res.end(JSON.stringify({message: error}));
         }
     }
@@ -46,7 +40,7 @@ const server = http.createServer(async (req, res) => {
             // get the id from url
             const id = req.url.split("/")[2];
             // delete todo
-            let message = await new Todo().deleteTodo(id);
+            let message = await new User().deleteTodo(id);
             // set the status code and content-type
             res.writeHead(200, {"Content-Type": "application/json"});
             // send the message
@@ -65,7 +59,7 @@ const server = http.createServer(async (req, res) => {
             // get the id from the url
             const id = req.url.split("/")[2];
             // update todo
-            let updated_todo = await new Todo().updateTodo(id);
+            let updated_todo = await new User().updateTodo(id);
             // set the status code and content-type
             res.writeHead(200, {"Content-Type": "application/json"});
             // send the message
@@ -79,7 +73,7 @@ const server = http.createServer(async (req, res) => {
     } else if (req.url === "/person" && req.method === "POST") {
         try {
             let todo_data = await getReqData(req);
-            let todo = await new Todo().createTodo(JSON.parse(todo_data));
+            let todo = await new User().createTodo(JSON.parse(todo_data));
             res.writeHead(201, {"Content-Type": "application/json"});
             res.end(JSON.stringify(todo));
 
@@ -93,7 +87,7 @@ const server = http.createServer(async (req, res) => {
         // // get the data sent along
         // let todo_data = await getReqData(req);
         // // create the todo
-        // let todo = await new Todo().createTodo(JSON.parse(todo_data));
+        // let todo = await new User().createTodo(JSON.parse(todo_data));
         // // set the status code and content-type
         // res.writeHead(201, {"Content-Type": "application/json"});
         // //send the todo

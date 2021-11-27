@@ -7,7 +7,7 @@ class Controller {
         return new Promise((resolve, _) => resolve(data));
     }
 
-    async getTodo(id) {
+    async getOneUser(id) {
         return new Promise((resolve, reject) => {
             let user
             for (let i = 0; i < data.length; i++) {
