@@ -60,7 +60,6 @@ class Controller {
                 data[userIndex] = updatedUser
                 resolve(updatedUser);
 
-
             }
 
         });
@@ -72,7 +71,8 @@ class Controller {
             let userIndex
             for (let i = 0; i < data.length; i++) {
                 if (data[i].id === id) {
-                    userIndex = data[i].id
+                    // userIndex = data[i].id
+                    userIndex = i
                 }
             }
 
