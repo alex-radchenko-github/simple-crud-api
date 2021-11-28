@@ -76,7 +76,7 @@ class Controller {
                 }
             }
 
-            if (!userIndex) {
+            if (userIndex === undefined) {
                 reject(`No user with id ${id} found`);
             } else {
                 data.splice(userIndex, 1)
