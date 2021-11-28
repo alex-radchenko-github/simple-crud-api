@@ -17,6 +17,18 @@ describe('E2E tests', () => {
         }
 
     })
+    afterAll(async () => {
+        const allUsers = await request(baseUrl).get('');
+        if (allUsers.body !== []) {
+            for (let i = 0; i < Object.keys(allUsers.body).length; i++) {
+
+                const response5 = await request(baseUrl)
+                    .delete(`/${allUsers.body[i].id}`)
+                expect(response5.statusCode).toBe(204);
+            }
+        }
+
+    })
     it('E2E from cross-check', async () => {
         const response = await request(baseUrl).get('');
         expect(response.statusCode).toBe(200);
