@@ -22,7 +22,7 @@ const server = http.createServer(async (req, res) => {
 
                 } else if (checkIdInData(id) === undefined) {
                     res.writeHead(404, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({message: `No user with id ${id} found`}));
+                    res.end(JSON.stringify({error: `No user with id ${id} found`}));
                 } else {
                     const user = await new User().getOneUser(id);
                     res.writeHead(200, {"Content-Type": "application/json"});
@@ -43,11 +43,11 @@ const server = http.createServer(async (req, res) => {
 
                 } else if (checkIdInData(id) === undefined) {
                     res.writeHead(404, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({message: `No user with id ${id} found`}));
+                    res.end(JSON.stringify({error: `No user with id ${id} found`}));
                 } else {
                     let message = await new User().deleteUser(id);
                     res.writeHead(204, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({message}));
+                    res.end(JSON.stringify(message));
                 }
 
             } catch (e) {
@@ -65,12 +65,19 @@ const server = http.createServer(async (req, res) => {
 
                 } else if (checkIdInData(id) === undefined) {
                     res.writeHead(404, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({message: `No user with id ${id} found`}));
+                    res.end(JSON.stringify({error: `No user with id ${id} found`}));
                 } else {
                     let new_user_data = await getReqData(req);
-                    let updated_user = await new User().updateUser(id, JSON.parse(new_user_data));
-                    res.writeHead(200, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify(updated_user));
+                    if (new_user_data === 'BAD JSON') {
+                        res.writeHead(400, {"Content-Type": "application/json"});
+                        res.end(JSON.stringify({error: `Unexpected end of JSON input`}));
+
+                    } else {
+                        let updated_user = await new User().updateUser(id, JSON.parse(new_user_data));
+                        res.writeHead(200, {"Content-Type": "application/json"});
+                        res.end(JSON.stringify(updated_user));
+
+                    }
                 }
 
             } catch (e) {
@@ -81,11 +88,12 @@ const server = http.createServer(async (req, res) => {
         } else if (req.url === "/person" && req.method === "POST") {
             try {
                 let user_data = await getReqData(req);
-                let userDataForChack = JSON.parse(user_data)
 
-                if (!userDataForChack.name || !userDataForChack.age || !userDataForChack.hobbies || Object.keys(userDataForChack).length > 3) {
+                let userDataForCheck = JSON.parse(user_data)
+
+                if (!userDataForCheck.name || !userDataForCheck.age || !userDataForCheck.hobbies || Object.keys(userDataForCheck).length > 3) {
                     res.writeHead(400, {"Content-Type": "application/json"});
-                    res.end(JSON.stringify({message: `Required fields are missing or wrong request scheme`}));
+                    res.end(JSON.stringify({error: `Required fields are missing or wrong request scheme`}));
                 } else {
                     let user = await new User().createUser(JSON.parse(user_data));
                     res.writeHead(201, {"Content-Type": "application/json"});
@@ -99,7 +107,7 @@ const server = http.createServer(async (req, res) => {
 
         } else {
             res.writeHead(404, {"Content-Type": "application/json"});
-            res.end(JSON.stringify({message: "Route not found"}));
+            res.end(JSON.stringify({error: "Route not found"}));
         }
 
     } catch (e) {

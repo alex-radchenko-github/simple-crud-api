@@ -10,8 +10,16 @@ function getReqData(req) {
             // listen till the end
             req.on("end", () => {
                 // send back the data
-                resolve(body);
+                try {
+                    JSON.parse(body)
+                    resolve(body);
+                } catch (e) {
+                    resolve('BAD JSON')
+                }
+
+
             });
+
         } catch (error) {
             reject(error);
         }

@@ -16,7 +16,6 @@ describe('E2E tests', () => {
             }
         }
 
-
     })
     it('E2E from cross-check', async () => {
         const response = await request(baseUrl).get('');
